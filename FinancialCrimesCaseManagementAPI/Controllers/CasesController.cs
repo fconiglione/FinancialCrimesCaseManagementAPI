@@ -1,4 +1,8 @@
+using FinancialCrimesCaseManagementAPI.Data;
+using FinancialCrimesCaseManagementAPI.DTOs;
+using FinancialCrimesCaseManagementAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using SQLitePCL;
 
 namespace FinancialCrimesCaseManagementAPI.Controllers;
 
@@ -6,4 +10,26 @@ namespace FinancialCrimesCaseManagementAPI.Controllers;
 [Route("[controller]")]
 public class CasesController : ControllerBase
 {
+    private readonly ICaseService _caseService;
+
+    public CasesController(ICaseService caseService)
+    {
+        _caseService = caseService;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateCase(CreateCaseDto request)
+    {
+        var result = await _caseService.CreateCase(request);
+
+        return Created($"/api/v1/cases/{result.Id}", result);
+    }
+
+    [HttpPut]
+    public async Task<IActionResult> UpdateCase(UpdateCaseDto request)
+    {
+        var result = await _caseService.UpdateCase(request);
+
+        return Ok(result);
+    }
 }
