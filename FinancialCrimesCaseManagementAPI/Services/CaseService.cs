@@ -16,7 +16,10 @@ public class CaseService: ICaseService
     
     public async Task<CaseSummaryDto> CreateCase(CreateCaseDto request)
     {
-        var transaction = await _context.Transactions.FirstOrDefaultAsync(x => x.Id == request.TransactionId);
+        var transaction = await _context.Transactions
+            .FirstOrDefaultAsync(x => x.Id == request.TransactionId);
+        
+        if (transaction == null) return null!;
         
         var newCase = new FraudCase(
             request.TransactionId,
@@ -39,10 +42,12 @@ public class CaseService: ICaseService
 
     public async Task<CaseSummaryDto> UpdateCase(int id, UpdateCaseDto request)
     {
-        var updatedCase = await _context.FraudCases.FirstOrDefaultAsync(x => x.Id == id);
+        var updatedCase = await _context.FraudCases.Include(x => x.Transaction).FirstOrDefaultAsync(x => x.Id == id);
 
-        updatedCase?.AdjudicatorNotes = request.AdjudicatorNotes;
-        updatedCase?.Status = request.Status;
+        if (updatedCase == null) return null!;
+        
+        updatedCase.AdjudicatorNotes = request.AdjudicatorNotes;
+        updatedCase.Status = request.Status;
 
         await _context.SaveChangesAsync();
 
