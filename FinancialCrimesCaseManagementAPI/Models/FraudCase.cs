@@ -7,4 +7,12 @@ public class FraudCase
     public string AdjudicatorNotes { get; set; } = null!;
     public string Status { get; set; } = null!;
     public Transaction Transaction { get; set; } = null!;
+
+    public FraudCase(int transactionId, string adjudicatorNotes, string status, Transaction transaction)
+    {
+        TransactionId = transactionId;
+        AdjudicatorNotes = adjudicatorNotes;
+        Status = status;
+        Transaction = transaction;
+    }
 }

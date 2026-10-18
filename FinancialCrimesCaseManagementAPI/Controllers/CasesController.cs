@@ -25,10 +25,10 @@ public class CasesController : ControllerBase
         return Created($"/api/v1/cases/{result.Id}", result);
     }
 
-    [HttpPut]
-    public async Task<IActionResult> UpdateCase(UpdateCaseDto request)
+    [HttpPut("{id:int}")]
+    public async Task<IActionResult> UpdateCase([FromRoute] int id, UpdateCaseDto request)
     {
-        var result = await _caseService.UpdateCase(request);
+        var result = await _caseService.UpdateCase(id, request);
 
         return Ok(result);
     }
