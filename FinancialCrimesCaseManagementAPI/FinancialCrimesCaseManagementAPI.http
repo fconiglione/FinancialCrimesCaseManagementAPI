@@ -1,0 +1,6 @@
+@FinancialCrimesCaseManagementAPI_HostAddress = http://localhost:5297
+
+GET {{FinancialCrimesCaseManagementAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
