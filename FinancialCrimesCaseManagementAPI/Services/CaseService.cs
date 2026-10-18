@@ -40,7 +40,7 @@ public class CaseService: ICaseService
         };
     }
 
-    public async Task<CaseSummaryDto> UpdateCase(int id, UpdateCaseDto request)
+    public async Task<CaseSummaryDto> UpdateCase(int? id, UpdateCaseDto request)
     {
         var updatedCase = await _context.FraudCases.Include(x => x.Transaction).FirstOrDefaultAsync(x => x.Id == id);
 

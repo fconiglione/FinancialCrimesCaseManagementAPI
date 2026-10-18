@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using FinancialCrimesCaseManagementAPI.Data;
 using FinancialCrimesCaseManagementAPI.DTOs;
 using FinancialCrimesCaseManagementAPI.Services;
@@ -20,15 +21,56 @@ public class CasesController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateCase(CreateCaseDto request)
     {
+        if (request.TransactionId is null)
+        {
+            return BadRequest("TransactionId is required.");
+        }
+
+        if (request.AdjudicatorNotes.Length > 100)
+        {
+            return BadRequest("AdjudicatorNotes must be 100 characters or less.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Status))
+        {
+            request.Status = "Open";
+        }  else if (request.Status.Trim().ToLower() != "Open" || request.Status.Trim().ToLower() != "Closed" || request.Status.Trim().ToLower() != "Escalated")
+        {
+            return BadRequest("Status must be one of 'Open', 'Closed', or 'Escalated'.");
+        }
+        
         var result = await _caseService.CreateCase(request);
+
+        if (result == null)
+        {
+            return BadRequest();
+        }
 
         return Created($"/api/v1/cases/{result.Id}", result);
     }
 
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> UpdateCase([FromRoute] int id, UpdateCaseDto request)
+    public async Task<IActionResult> UpdateCase([FromRoute] int? id, UpdateCaseDto request)
     {
+        if (id is null)
+        {
+            return BadRequest("FraudCaseId is required.");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Status))
+        {
+            request.Status = "Open";
+        }  else if (request.Status.Trim().ToLower() != "Open" || request.Status.Trim().ToLower() != "Closed" || request.Status.Trim().ToLower() != "Escalated")
+        {
+            return BadRequest("Status must be one of 'Open', 'Closed', or 'Escalated'.");
+        }
+        
         var result = await _caseService.UpdateCase(id, request);
+        
+        if (result == null)
+        {
+            return BadRequest();
+        }
 
         return Ok(result);
     }
