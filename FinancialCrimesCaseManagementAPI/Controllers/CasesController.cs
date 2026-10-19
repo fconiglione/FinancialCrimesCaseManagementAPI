@@ -74,4 +74,22 @@ public class CasesController : ControllerBase
 
         return Ok(result);
     }
+    
+    [HttpGet("search")]
+    public ActionResult SearchCasesByMerchant(string merchant)
+    {
+        if (String.IsNullOrWhiteSpace(merchant))
+        {
+            return BadRequest("Merchant must not be null.");
+        }
+        
+        var result = _caseService.SearchCasesByMerchant(merchant);
+
+        if (result == null)
+        {
+            return BadRequest();
+        }
+
+        return Ok(result);
+    }
 }

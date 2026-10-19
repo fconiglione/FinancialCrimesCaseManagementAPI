@@ -59,4 +59,26 @@ public class CaseService: ICaseService
             Transaction = updatedCase.Transaction
         };
     }
+
+    public async Task<List<CaseSummaryDto>> SearchCasesByMerchant(string merchant)
+    {
+        var filteredCases = await _context.FraudCases
+            .Include(c => c.Transaction)
+            .Where(c => c.Transaction.Merchant.Contains(merchant))
+            .Select(c => new CaseSummaryDto
+            {
+                Id = c.Id,
+                AdjudicatorNotes = c.AdjudicatorNotes,
+                Status = c.Status,
+                Transaction = c.Transaction
+            })
+            .ToListAsync(); 
+
+        if (!filteredCases.Any())
+        {
+            return null;
+        }
+
+        return filteredCases;
+    }
 }
