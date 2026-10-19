@@ -1,4 +1,5 @@
 using FinancialCrimesCaseManagementAPI.Data;
+using FinancialCrimesCaseManagementAPI.Middleware;
 using FinancialCrimesCaseManagementAPI.Services;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,6 +25,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Adding exception handling middleware
+app.UseMiddleware<ExceptionMiddleware>();
 
 app.UseAuthorization();
 
