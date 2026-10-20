@@ -81,4 +81,34 @@ public class CaseService: ICaseService
 
         return filteredCases;
     }
+
+    public async Task<PagedResultDto<CaseSummaryDto>> GetPagedCases(string status, int page, int pageSize)
+    {
+        var baseQuery = _context.FraudCases.Where(c => c.Status == status);
+
+        var totalCount = await baseQuery.CountAsync();
+
+        var pagedCases = await baseQuery
+            .Include(c => c.Transaction)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(c => new CaseSummaryDto 
+            {
+                Id = c.Id,
+                AdjudicatorNotes = c.AdjudicatorNotes,
+                Status = c.Status,
+                Transaction = c.Transaction
+            })
+            .ToListAsync();
+
+        var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+        return new PagedResultDto<CaseSummaryDto>
+        {
+            Items = pagedCases,
+            TotalCount = totalCount,
+            CurrentPage = page,
+            TotalPages = totalPages
+        };
+    }
 }

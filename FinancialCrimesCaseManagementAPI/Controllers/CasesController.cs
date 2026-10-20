@@ -92,4 +92,17 @@ public class CasesController : ControllerBase
 
         return Ok(result);
     }
+    
+    [HttpGet("paged")]
+    public async Task<IActionResult> GetPagedCases([FromQuery] string status, [FromQuery] int page, [FromQuery] int pageSize)
+    {
+        if (page <= 0 || pageSize <= 0)
+        {
+            return BadRequest("Page and pageSize must be greater than 0.");
+        }
+
+        var result = _caseService.GetPagedCases(status, page, pageSize);
+
+        return Ok(result);
+    }
 }
