@@ -1,10 +1,19 @@
+using FinancialCrimesCaseManagementAPI.Data;
+using FinancialCrimesCaseManagementAPI.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite("Data Source=fraudcases.db"));
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
+
+builder.Services.AddScoped<ICaseService, CaseService>();
 
 var app = builder.Build();
 
