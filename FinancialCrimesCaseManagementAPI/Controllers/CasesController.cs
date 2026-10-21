@@ -101,7 +101,21 @@ public class CasesController : ControllerBase
             return BadRequest("Page and pageSize must be greater than 0.");
         }
 
-        var result = _caseService.GetPagedCases(status, page, pageSize);
+        var result = await _caseService.GetPagedCases(status, page, pageSize);
+
+        return Ok(result);
+    }
+
+    // Endpoint to explicitly escalate a case
+    [HttpPut("{id}/escalate")]
+    public async Task<IActionResult> EscalateCase([FromRoute] int? id)
+    {
+        if (id is null)
+        {
+            return BadRequest("FraudCaseId is required.");
+        }
+        
+        var result = await _caseService.EscalateCase(id);
 
         return Ok(result);
     }

@@ -111,4 +111,24 @@ public class CaseService: ICaseService
             TotalPages = totalPages
         };
     }
+
+    public async Task<CaseSummaryDto> EscalateCase(int? id)
+    {
+        var identifiedCase = await _context.FraudCases.Include(c=>c.Transaction).FirstOrDefaultAsync(c => c.Id == id);
+
+        if (identifiedCase is null) return null;
+
+        identifiedCase.Status = "Escalated";
+        identifiedCase.AdjudicatorNotes = "Case has been escalated.";
+
+        await _context.SaveChangesAsync();
+
+        return new CaseSummaryDto()
+        {
+            Id = identifiedCase.Id,
+            AdjudicatorNotes = identifiedCase.AdjudicatorNotes,
+            Status = identifiedCase.Status,
+            Transaction = identifiedCase.Transaction
+        };
+    }
 }
