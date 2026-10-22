@@ -131,4 +131,45 @@ public class CaseService: ICaseService
             Transaction = identifiedCase.Transaction
         };
     }
+
+    public async Task<List<CaseSummaryDto>> FilterCases(string? status, double? minAmount, string? sortBy, bool? sortDescending)
+    {
+        IQueryable<FraudCase> query = _context.FraudCases
+            .Include(c => c.Transaction)
+            .AsQueryable();
+
+        if (!string.IsNullOrEmpty(status))
+        {
+            query = query.Where(c => c.Status == status);
+        }
+
+        if (minAmount.HasValue)
+        {
+            query = query.Where(c => c.Transaction.Amount >= minAmount.Value);
+        }
+
+        query = sortBy?.ToLower() switch
+        {
+            "amount" => (sortDescending ?? false)
+                ? query.OrderByDescending(c => c.Transaction.Amount) 
+                : query.OrderBy(c => c.Transaction.Amount),
+            _ => (sortDescending ?? false)
+                ? query.OrderByDescending(c => c.Transaction.Timestamp) 
+                : query.OrderBy(c => c.Transaction.Timestamp)
+        };
+
+        var result = await query
+            .Select(c => new CaseSummaryDto
+            {
+                Id = c.Id,
+                AdjudicatorNotes = c.AdjudicatorNotes,
+                Status = c.Status,
+                Transaction = c.Transaction
+            })
+            .ToListAsync();
+
+        if (result is null) return null;
+        
+        return result;
+    }
 }

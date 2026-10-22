@@ -9,4 +9,5 @@ public interface ICaseService
     public Task<List<CaseSummaryDto>> SearchCasesByMerchant(string merchant);
     public Task<PagedResultDto<CaseSummaryDto>> GetPagedCases(string status, int page, int pageSize);
     public Task<CaseSummaryDto> EscalateCase(int? id);
+    public Task<List<CaseSummaryDto>> FilterCases(string? status, double? minAmount, string? sortBy, bool? sortDescending);
 }

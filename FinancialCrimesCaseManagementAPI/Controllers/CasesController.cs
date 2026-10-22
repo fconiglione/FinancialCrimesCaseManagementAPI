@@ -119,4 +119,16 @@ public class CasesController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpGet("filter")]
+    public async Task<IActionResult> FilterCases([FromQuery] string? status, 
+        [FromQuery] double? minAmount, [FromQuery] string? sortBy, 
+        [FromQuery] bool? sortDescending)
+    {
+        var result = await _caseService.FilterCases(status, minAmount, sortBy, sortDescending);
+
+        if (result == null) return BadRequest();
+
+        return Ok(result);
+    }
 }
